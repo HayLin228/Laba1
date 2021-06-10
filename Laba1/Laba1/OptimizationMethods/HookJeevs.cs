@@ -19,6 +19,7 @@ namespace Laba1.OptimizationMethods
 		{
 			var prevPoint = startPoint;
 			var prevVal = Funct(startPoint);
+			Point direction;
 			List<Tuple<Point, double>> trace = new List<Tuple<Point, double>> { new Tuple<Point, double>(prevPoint, prevVal) };
 			while (true)
 			{
@@ -68,17 +69,20 @@ namespace Laba1.OptimizationMethods
 						newPoint.y += delta;
 					}
 				}
-				Point direction = DiffPoint(newPoint, prevPoint);
-				if (direction.x < eps && direction.y < eps)
+
+				if (prevPoint == newPoint)
 				{
 					if (delta <= eps)
 					{
 						return trace;
 					}
-					delta *= m;
+					delta /= 2;
 					continue;
 				}
-
+				direction = DiffPoint(newPoint, prevPoint);
+				var funcResult = GoldenRatioMethod(prevPoint.x, newPoint.x, eps, prevPoint, direction);
+				newPoint = SumPoint(prevPoint, MulPoint(direction, funcResult.Item1));
+				trace.Append(new Tuple<Point, double>(newPoint, funcResult.Item2));
 			}
 
 		}
@@ -101,6 +105,65 @@ namespace Laba1.OptimizationMethods
 				Point newPoint = SumPoint(prevPoint, MulPoint(dir, x));
 				return Funct(newPoint);
 			};
+		}
+
+		private Tuple<double, double> GoldenRatioMethod(double a, double b, double eps, Point prevPoint, Point dir)
+		{
+			var t = (Math.Sqrt(5) - 1) / 2;
+			var d = b - a;
+			var dif = t * d;
+			var y = a + dif;
+			var x = b - dif;
+			var updateFx = true;
+			var updateFy = true;
+			int iters = 0;
+			int measurements = 0;
+			var func = GetSignleVariableFunc(prevPoint, dir);
+			double fx = 0;
+			double fy = 0;
+			double xMin = 0;
+			double fMin = 0;
+			while (true)
+			{
+				iters++;
+				if (updateFx)
+				{
+					fx = func(x);
+					updateFx = false;
+					measurements++;
+				}
+				if (updateFy)
+				{
+					fy = func(y);
+					updateFy = false;
+					measurements++;
+				}
+				if (fx > fy)
+				{
+					fMin = fy;
+					xMin = y;
+					a = x;
+					x = y;
+					fx = fy;
+					y = a + b - x;
+					updateFy = true;
+				}
+				else
+				{
+					fMin = fx;
+					xMin = x;
+					b = y;
+					y = x;
+					fy = fx;
+					y = a + b - y;
+					updateFx = true;
+				}
+				if (b - a < eps)
+				{
+					return new Tuple<double, double>(xMin, fMin);
+				}
+
+			}
 		}
 	}
 }
