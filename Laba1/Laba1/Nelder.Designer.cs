@@ -1,7 +1,7 @@
 ﻿
 namespace Laba1
 {
-    partial class Form1
+    partial class Nelder
     {
         /// <summary>
         /// Required designer variable.

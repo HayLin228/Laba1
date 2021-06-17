@@ -7,10 +7,10 @@ using System.Windows.Forms;
 
 namespace Laba1
 {
-    public partial class Form1 : Form
+    public partial class Nelder : Form
     {
         private NelderMild n = new NelderMild();
-        public Form1()
+        public Nelder()
         {
             InitializeComponent();
         }

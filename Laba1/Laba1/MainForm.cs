@@ -12,8 +12,10 @@ namespace Laba1
 {
     public partial class MainForm : Form
     {
-        Form1 form1 = new Form1();
-        HookJevs hj = new HookJevs();
+        private Nelder form1 = new Nelder();
+        private HookJevs hj = new HookJevs();
+        private GradientMethod gm = new GradientMethod();
+        private Fletcher fl = new Fletcher();
         public MainForm()
         {
             InitializeComponent();
@@ -29,5 +31,15 @@ namespace Laba1
         {
             hj.Show();
         }
-    }
+
+		private void button3_Click(object sender, EventArgs e)
+		{
+            gm.Show();
+		}
+
+		private void button4_Click(object sender, EventArgs e)
+		{
+            fl.Show();
+		}
+	}
 }
