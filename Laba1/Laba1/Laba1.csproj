@@ -48,6 +48,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entities\Point.cs" />
+    <Compile Include="Fletcher.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Fletcher.Designer.cs">
+      <DependentUpon>Fletcher.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GradientMethod.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GradientMethod.Designer.cs">
+      <DependentUpon>GradientMethod.cs</DependentUpon>
+    </Compile>
     <Compile Include="Nelder.cs">
       <SubType>Form</SubType>
     </Compile>
