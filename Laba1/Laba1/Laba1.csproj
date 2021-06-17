@@ -80,6 +80,7 @@
     </Compile>
     <Compile Include="OptimizationMethods\HookJeevs.cs" />
     <Compile Include="OptimizationMethods\NelderMild.cs" />
+    <Compile Include="OptimizationMethods\SvennMethod.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Nelder.resx">
