@@ -10,12 +10,13 @@ namespace Laba1.OptimizationMethods
 	public class HookJeevs
 	{
 		int N = 2;
-		private double Funct(Point p)
-		{
-			return -Math.Pow(p.x - 1.1, 2) / 2 - Math.Pow(p.y - 2, 2) / 6;
-		}
+        private double Funct(Point p)
+        {
+            //return Math.Pow(p.x, 2) + Math.Pow(p.y, 2);
+            return -1 * (-Math.Pow(p.x - 1.1, 2) / 2 - Math.Pow(p.y - 2, 2) / 6);
+        }
 
-		private List<Tuple<Point, double>> FindMinimum(Point startPoint, double delta, double eps, double m)
+		public List<Tuple<Point, double>> FindMinimum(Point startPoint, double delta, double eps, double m = 0.5)
 		{
 			var prevPoint = startPoint;
 			var prevVal = Funct(startPoint);
@@ -79,22 +80,22 @@ namespace Laba1.OptimizationMethods
 					delta /= 2;
 					continue;
 				}
-				direction = DiffPoint(newPoint, prevPoint);
+				direction = DiffVect(newPoint, prevPoint);
 				var funcResult = GoldenRatioMethod(prevPoint.x, newPoint.x, eps, prevPoint, direction);
-				newPoint = SumPoint(prevPoint, MulPoint(direction, funcResult.Item1));
-				trace.Append(new Tuple<Point, double>(newPoint, funcResult.Item2));
+				newPoint = SumVect(prevPoint, MulVect(direction, funcResult.Item1));
+				trace.Add(new Tuple<Point, double>(newPoint, funcResult.Item2));
 			}
 
 		}
-		private Point DiffPoint(Point p1, Point p2)
+		private Point DiffVect(Point p1, Point p2)
 		{
-			return new Point(Math.Abs(p1.x - p2.x), Math.Abs(p1.y - p2.y));
+			return new Point(p1.x - p2.x, p1.y - p2.y);
 		}
-		private Point SumPoint(Point p1, Point p2)
+		private Point SumVect(Point p1, Point p2)
 		{
 			return new Point(Math.Abs(p1.x + p2.x), Math.Abs(p1.y + p2.y));
 		}
-		private Point MulPoint(Point p1, double multipler)
+		private Point MulVect(Point p1, double multipler)
 		{
 			return new Point(Math.Abs(p1.x * multipler), Math.Abs(p1.y * multipler));
 		}
@@ -102,7 +103,7 @@ namespace Laba1.OptimizationMethods
 		{
 			return (x) =>
 			{
-				Point newPoint = SumPoint(prevPoint, MulPoint(dir, x));
+				Point newPoint = SumVect(prevPoint, MulVect(dir, x));
 				return Funct(newPoint);
 			};
 		}
