@@ -10,80 +10,115 @@ namespace Laba1.OptimizationMethods
 	public class HookJeevs
 	{
 		int N = 2;
-        private double Funct(Point p)
-        {
-            //return Math.Pow(p.x, 2) + Math.Pow(p.y, 2);
-            return -1 * (-Math.Pow(p.x - 1.1, 2) / 2 - Math.Pow(p.y - 2, 2) / 6);
-        }
+		private double Funct(Point p)
+		{
+			//return Math.Pow(p.x, 2) + Math.Pow(p.y, 2);
+			return -1 * (-Math.Pow(p.x - 1.1, 2) / 2 - Math.Pow(p.y - 2, 2) / 6);
+		}
 
 		public List<Tuple<Point, double>> FindMinimum(Point startPoint, double delta, double eps, double m = 0.5)
 		{
-			var prevPoint = startPoint;
+			List<Point> pointsForDrawing = new List<Point>();
+			var prevPoint = new Point(startPoint.x, startPoint.y);
 			var prevVal = Funct(startPoint);
-			Point direction;
+			pointsForDrawing.Add(prevPoint);
+			Point direction = new Point(1, 1);
 			List<Tuple<Point, double>> trace = new List<Tuple<Point, double>> { new Tuple<Point, double>(prevPoint, prevVal) };
 			while (true)
 			{
 				if (trace.Count > 1)
 				{
-					prevPoint = trace[trace.Count - 2].Item1;
-					prevVal = trace[trace.Count - 2].Item2;
+					prevPoint = new Point(trace[trace.Count - 1].Item1.x, trace[trace.Count - 1].Item1.y);
+					prevVal = trace[trace.Count - 1].Item2;
 				}
-				var newPoint = prevPoint;
+				var newPoint = new Point(prevPoint.x, prevPoint.y);
+
 				double newVal;
 				for (int i = 0; i < N; i++)
 				{
 					if (i == 0)
 					{
-						newPoint.x += delta;
+						newVal = Funct(new Point(newPoint.x + delta, newPoint.y));
+						//newPoint.x += delta;
 					}
 					else
 					{
-						newPoint.y += delta;
+						newVal = Funct(new Point(newPoint.x, newPoint.y + delta));
+						//newPoint.y += delta;
 					}
-					newVal = Funct(newPoint);
+					//newVal = Funct(newPoint);
 					if (newVal < prevVal)
 					{
+						if (i == 0)
+						{
+							newPoint.x += delta;
+						}
+						else
+						{
+							newPoint.y += delta;
+						}
+						pointsForDrawing.Add(newPoint);
 						prevVal = newVal;
 						continue;
 					}
 					if (i == 0)
 					{
-						newPoint.x -= delta * 2;
+						newVal = Funct(new Point(newPoint.x - delta, newPoint.y));
+						//newPoint.x += delta;
 					}
 					else
 					{
-						newPoint.y -= delta * 2;
+						newVal = Funct(new Point(newPoint.x, newPoint.y - delta));
+						//newPoint.y += delta;
 					}
-					newVal = Funct(newPoint);
+					//newVal = Funct(newPoint);
 					if (newVal < prevVal)
 					{
+						if (i == 0)
+						{
+							newPoint.x -= delta;
+						}
+						else
+						{
+							newPoint.y -= delta;
+						}
+						pointsForDrawing.Add(newPoint);
 						prevVal = newVal;
 						continue;
 					}
-					if (i == 0)
-					{
-						newPoint.x += delta;
-					}
-					else
-					{
-						newPoint.y += delta;
-					}
+					//if (i == 0)
+					//{
+					//	newPoint.x += delta;
+					//}
+					//else
+					//{
+					//	newPoint.y += delta;
+					//}
 				}
 
-				if (prevPoint == newPoint)
+				if (prevPoint.ComparePoints(newPoint))
 				{
 					if (delta <= eps)
 					{
 						return trace;
 					}
-					delta /= 2;
-					continue;
+					else
+					{
+						delta /= 2;
+						continue;
+					}
 				}
-				direction = DiffVect(newPoint, prevPoint);
-				var funcResult = GoldenRatioMethod(prevPoint.x, newPoint.x, eps, prevPoint, direction);
-				newPoint = SumVect(prevPoint, MulVect(direction, funcResult.Item1));
-				trace.Add(new Tuple<Point, double>(newPoint, funcResult.Item2));
+				else if (prevPoint != newPoint)
+				{
+					direction = DiffVect(newPoint, prevPoint);
+				}
+
+				var singFunc = GetSignleVariableFunc(prevPoint, direction);
+				var tupForGoldenRation = SvennMethod.FindUnimodalSegment(0, 0.01, singFunc);
+				var funcResult = GoldenRatioMethod2(tupForGoldenRation.Item1, tupForGoldenRation.Item2, eps, singFunc);
+				newPoint = SumVect(prevPoint, MulVect(direction, funcResult));
+				trace.Add(new Tuple<Point, double>(newPoint, Funct(newPoint)));
+				
 			}
 
 		}
@@ -93,11 +128,11 @@ namespace Laba1.OptimizationMethods
 		}
 		private Point SumVect(Point p1, Point p2)
 		{
-			return new Point(Math.Abs(p1.x + p2.x), Math.Abs(p1.y + p2.y));
+			return new Point(p1.x + p2.x, p1.y + p2.y);
 		}
 		private Point MulVect(Point p1, double multipler)
 		{
-			return new Point(Math.Abs(p1.x * multipler), Math.Abs(p1.y * multipler));
+			return new Point(p1.x * multipler, p1.y * multipler);
 		}
 		private Func<double, double> GetSignleVariableFunc(Point prevPoint, Point dir)
 		{
@@ -108,8 +143,36 @@ namespace Laba1.OptimizationMethods
 			};
 		}
 
-		private Tuple<double, double> GoldenRatioMethod(double a, double b, double eps, Point prevPoint, Point dir)
+		private double GoldenRatioMethod2(double a, double b, double eps, Func<double, double> func)
 		{
+			eps /= 10;
+			var t = (Math.Sqrt(5) - 1) / 2;
+			var an = a;
+			var bn = b;
+			var xn = b - t * (b - a);
+			var yn = a + b - xn;
+
+			while ((bn - an) > eps)
+			{
+				if (func(xn) < func(yn))
+				{
+					bn = yn;
+					yn = xn;
+					xn = an + bn - yn;
+				}
+				else
+				{
+					an = xn;
+					xn = yn;
+					yn = an + bn - xn;
+				}
+			}
+			return (an + bn) / 2;
+		}
+
+		private Tuple<double, double> GoldenRatioMethod(double a, double b, double eps, Func<double, double> func)
+		{
+			eps /= 10;
 			var t = (Math.Sqrt(5) - 1) / 2;
 			var d = b - a;
 			var dif = t * d;
@@ -119,7 +182,6 @@ namespace Laba1.OptimizationMethods
 			var updateFy = true;
 			int iters = 0;
 			int measurements = 0;
-			var func = GetSignleVariableFunc(prevPoint, dir);
 			double fx = 0;
 			double fy = 0;
 			double xMin = 0;
