@@ -78,6 +78,7 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="OptimizationMethods\GradFast.cs" />
     <Compile Include="OptimizationMethods\HookJeevs.cs" />
     <Compile Include="OptimizationMethods\NelderMild.cs" />
     <Compile Include="OptimizationMethods\SvennMethod.cs" />
