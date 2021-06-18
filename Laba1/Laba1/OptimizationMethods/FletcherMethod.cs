@@ -1,14 +1,15 @@
-﻿using Laba1.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Laba1.Entities;
 
 namespace Laba1.OptimizationMethods
 {
-	public class GradFast
+	public class FletcherMethod
 	{
+
 		private List<List<double>> H = new List<List<double>>() { new List<double>() { 1, 0 }, new List<double>() { 0, 0.333333333 } };
 		private double Funct(Point p)
 		{
@@ -25,26 +26,27 @@ namespace Laba1.OptimizationMethods
 			List<Tuple<Point, double>> result = new List<Tuple<Point, double>>();
 			var xk = startPoint;
 			var fk = Funct(xk);
+
 			result.Add(new Tuple<Point, double>(new Point(xk.x, xk.y), fk));
 			Point gradF = Grad(xk);
+			var d = GetMultiply(gradF, -1);
 			Point xkNew;
+			double beta;
+
 			while (Math.Abs(gradF.x) > eps && Math.Abs(gradF.y) > eps)
 			{
-				var l1 = GetMultiplyVect(gradF, gradF);
-				var l2 = GetMultiplyVect(GetMatrixMultiply(H, gradF), gradF);
-				var lambda = l1 / l2 ;
-				xkNew = new Point(xk.x - gradF.x*lambda, xk.y - gradF.y*lambda);
-				result.Add(new Tuple<Point, double>(new Point(xkNew.x, xkNew.y),Funct(xkNew)));
+				var l1 = GetMultiplyVect(d, gradF);
+				var l2 = GetMultiplyVect(GetMatrixMultiply(H, d), gradF);
+				var lambda = l1 / l2;
+				xkNew = new Point(xk.x - gradF.x * lambda, xk.y - gradF.y * lambda);
+				result.Add(new Tuple<Point, double>(new Point(xkNew.x, xkNew.y), Funct(xkNew)));
+				beta = GetMultiplyVect(Grad(xkNew), Grad(xkNew)) / GetMultiplyVect(Grad(xk), Grad(xk));
 				xk = xkNew;
 				gradF = Grad(xk);
+				d = GetSum(GetMultiply(gradF, -1), GetMultiply(d, beta));
+
 			}
 			return result;
-		}
-
-		
-		private Point GetSum(Point p1, Point p2)
-		{
-			return new Point(p1.x + p2.x, p1.y + p2.y);
 		}
 
 		private double GetMultiplyVect(Point p1, Point p2)
@@ -64,6 +66,9 @@ namespace Laba1.OptimizationMethods
 				vect.x * matrix[0][0] + vect.y * matrix[1][0],
 				vect.x * matrix[0][1] + vect.y * matrix[1][1]);
 		}
-
+		private Point GetSum(Point p1, Point p2)
+		{
+			return new Point(p1.x + p2.x, p1.y + p2.y);
+		}
 	}
 }

@@ -1,4 +1,6 @@
-﻿namespace Laba1.Entities
+﻿using System.Collections.Generic;
+
+namespace Laba1.Entities
 {
 	public class Point
 	{
@@ -17,6 +19,10 @@
 		public bool ComparePoints(Point p2)
 		{
 			return this.x - p2.x < eps&& this.y - p2.y < eps;
+		}
+		public Point CollectionToPoint(List<double> list)
+		{
+			return new Point(list[0], list[1]);
 		}
 	}
 }

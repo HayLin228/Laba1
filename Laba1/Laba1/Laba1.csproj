@@ -78,12 +78,19 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="OptimizationMethods\FletcherMethod.cs" />
     <Compile Include="OptimizationMethods\GradFast.cs" />
     <Compile Include="OptimizationMethods\HookJeevs.cs" />
     <Compile Include="OptimizationMethods\NelderMild.cs" />
     <Compile Include="OptimizationMethods\SvennMethod.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Fletcher.resx">
+      <DependentUpon>Fletcher.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GradientMethod.resx">
+      <DependentUpon>GradientMethod.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Nelder.resx">
       <DependentUpon>Nelder.cs</DependentUpon>
     </EmbeddedResource>
